@@ -148,6 +148,8 @@ const startCamera = async () => {
 
     setIsSuccess(false)
 
+    setIsCameraActive(true)
+
 
     try {
 
@@ -176,8 +178,6 @@ const startCamera = async () => {
         }
 
       )
-
-      setIsCameraActive(true)
 
     } catch {
 
@@ -294,7 +294,7 @@ const startCamera = async () => {
 
 
               <div className="rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-lowest p-4">
-                <div id="qr-video" className={isCameraActive ? "mb-3 h-56 w-full rounded-lg bg-black" : "hidden"} />
+                <div id="qr-video" className="mb-3 h-56 w-full rounded-lg bg-black" />
                 <button
 
                   type="button"
