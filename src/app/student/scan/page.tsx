@@ -31,12 +31,6 @@ export default function StudentScanPage() {
 
   const [isCameraActive, setIsCameraActive] = useState(false)
 
-  const videoRef = useRef<HTMLVideoElement | null>(null)
-
-  const streamRef = useRef<MediaStream | null>(null)
-
-  const scanFrameRef = useRef<number | null>(null)
-
   const html5QrcodeRef = useRef<Html5Qrcode | null>(null)
 
   const router = useRouter()
@@ -69,14 +63,6 @@ export default function StudentScanPage() {
 
   const stopCamera = useCallback(() => {
 
-    if (scanFrameRef.current) {
-
-      cancelAnimationFrame(scanFrameRef.current)
-
-      scanFrameRef.current = null
-
-    }
-
     if (html5QrcodeRef.current) {
 
       try {
@@ -92,10 +78,6 @@ export default function StudentScanPage() {
       html5QrcodeRef.current = null
 
     }
-
-    streamRef.current?.getTracks().forEach((track) => track.stop())
-
-    streamRef.current = null
 
     setIsCameraActive(false)
 
@@ -312,9 +294,7 @@ const startCamera = async () => {
 
 
               <div className="rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-lowest p-4">
-
-                <video ref={videoRef} id="qr-video" className={isCameraActive ? "mb-3 h-56 w-full rounded-lg bg-black object-cover" : "hidden"} muted playsInline />
-
+                <div id="qr-video" className={isCameraActive ? "mb-3 h-56 w-full rounded-lg bg-black" : "hidden"} />
                 <button
 
                   type="button"
