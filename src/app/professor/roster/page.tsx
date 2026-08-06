@@ -153,7 +153,7 @@ function RosterPageContent() {
 
       <div className="mb-6 flex flex-wrap gap-3">
         <div className="rounded-lg bg-primary-container px-4 py-3 text-sm text-on-primary-container">
-          <span className="font-semibold">Total matriculados:</span> {roster.length}
+          <span className="font-semibold">Total matriculados:</span> {roster?.length ?? 0}
         </div>
         <div className="rounded-lg bg-tertiary-container px-4 py-3 text-sm text-on-tertiary-container">
           <span className="font-semibold">Horario:</span> {section.schedule || "No definido"}
@@ -163,7 +163,7 @@ function RosterPageContent() {
         </div>
       </div>
 
-      {roster.length > 0 ? (
+      { (roster?.length ?? 0) > 0 ? (
         <div className="overflow-x-auto rounded-xl border border-outline-variant bg-surface-container-lowest">
           <table className="w-full text-left">
             <thead className="border-b border-outline-variant bg-surface-container-low">
@@ -180,7 +180,7 @@ function RosterPageContent() {
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant">
-              {roster.map((student) => (
+              {roster?.map((student) => (
                 <tr key={student.id} className="transition-colors hover:bg-background">
                   <td className="px-6 py-4 text-sm font-medium text-primary">
                     {student.studentCode || "Sin matrícula"}
