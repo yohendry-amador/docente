@@ -32,7 +32,7 @@ export default function AdminEnrollmentsPage() {
   const [moveData, setMoveData] = useState({ newSectionId: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isHistoryLoading, setIsHistoryLoading] = useState(false)
-  const [filterStatus, setFilterStatus] = useState<EnrollmentStatus | "ALL">("ALL")
+  const [sectionFilter, setSectionFilter] = useState<string>("ALL")
 
   const loadData = async () => {
     setIsLoading(true)
@@ -68,8 +68,8 @@ export default function AdminEnrollmentsPage() {
   }, [])
 
   useEffect(() => {
-    loadEnrollments(filterStatus)
-  }, [filterStatus])
+    loadEnrollments(sectionFilter)
+  }, [sectionFilter])
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -112,7 +112,7 @@ export default function AdminEnrollmentsPage() {
     } catch (err) { console.error("Error updating status:", err) }
   }
 
-  const filteredEnrollments = enrollments.filter(e => filterStatus === "ALL" || e.status === filterStatus)
+  const displayedEnrollments = enrollments
 
   return (
     <AdminShell adminName={adminName} userRole="ADMIN">
@@ -129,7 +129,7 @@ export default function AdminEnrollmentsPage() {
 
       <div className="mb-6 rounded-xl border border-outline-variant bg-surface-container-lowest p-4">
         <label className="mb-2 block text-sm font-semibold text-on-surface-variant">Filtrar por sección</label>
-        <select value={filterStatus} onChange={(e) => { const val = e.target.value; setFilterStatus(val as any); if (val !== "ALL") loadEnrollments(val); else setEnrollments([]); }} className="w-full max-w-md rounded-lg border border-outline-variant bg-surface-container py-2.5 px-4 text-sm outline-none focus:border-primary">
+        <select value={sectionFilter} onChange={(e) => { const val = e.target.value; setSectionFilter(val); if (val !== "ALL") loadEnrollments(val); else loadEnrollments("ALL"); }} className="w-full max-w-md rounded-lg border border-outline-variant bg-surface-container py-2.5 px-4 text-sm outline-none focus:border-primary">
           <option value="ALL">Todas las secciones</option>
           {sections.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
         </select>
@@ -150,8 +150,8 @@ export default function AdminEnrollmentsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant">
-              {filteredEnrollments.length > 0 ? (
-                filteredEnrollments.map((enrollment) => (
+              {displayedEnrollments.length > 0 ? (
+                displayedEnrollments.map((enrollment) => (
                   <tr key={enrollment.id} className="hover:bg-surface-container transition-colors">
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium text-on-surface">{enrollment.student.firstName} {enrollment.student.lastName}</div>
