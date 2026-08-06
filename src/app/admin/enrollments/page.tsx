@@ -158,7 +158,7 @@ export default function AdminEnrollmentsPage() {
                       <div className="text-xs text-on-surface-variant">{enrollment.student.studentCode} · {enrollment.student.email}</div>
                     </td>
                     <td className="px-6 py-4 text-sm text-on-surface">
-                      {enrollment.section.course.name} - Sección {enrollment.section.code}
+                      {enrollment.section?.course?.name ?? '—'} - Sección {enrollment.section?.code ?? ''}
                     </td>
                     <td className="px-6 py-4">
                       <select
@@ -273,9 +273,9 @@ export default function AdminEnrollmentsPage() {
                   <tbody className="divide-y divide-outline-variant">
                     {studentHistory.map((h) => (
                       <tr key={h.id}>
-                        <td className="px-4 py-3 text-sm text-on-surface">{h.section.course.name} ({h.section.course.code})</td>
-                        <td className="px-4 py-3 text-sm text-on-surface-variant">{h.section.code}</td>
-                        <td className="px-4 py-3 text-sm text-on-surface-variant">{h.section.professor.firstName} {h.section.professor.lastName}</td>
+                        <td className="px-4 py-3 text-sm text-on-surface">{h.section?.course?.name ?? '—'} ({h.section?.course?.code ?? ''})</td>
+                        <td className="px-4 py-3 text-sm text-on-surface-variant">{h.section?.code ?? ''}</td>
+                        <td className="px-4 py-3 text-sm text-on-surface-variant">{h.section?.professor?.firstName ?? ''} {h.section?.professor?.lastName ?? ''}</td>
                         <td className="px-4 py-3">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${h.status === "ACTIVE" ? "bg-green-100 text-green-800" : h.status === "DROPPED" ? "bg-red-100 text-red-800" : h.status === "COMPLETED" ? "bg-blue-100 text-blue-800" : "bg-gray-100 text-gray-800"}`}>
                             {h.status}
