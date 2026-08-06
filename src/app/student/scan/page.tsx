@@ -10,13 +10,11 @@ import Link from "next/link"
 
 import { api } from "@/lib/api/client"
 
+import { Html5Qrcode } from "html5-qrcode"
 
 
-type BarcodeDetectorConstructor = new (options?: { formats?: string[] }) => {
 
-  detect(image: HTMLVideoElement): Promise<Array<{ rawValue?: string }>>
 
-}
 
 
 
@@ -38,6 +36,8 @@ export default function StudentScanPage() {
   const streamRef = useRef<MediaStream | null>(null)
 
   const scanFrameRef = useRef<number | null>(null)
+
+  const html5QrcodeRef = useRef<Html5Qrcode | null>(null)
 
   const router = useRouter()
 
@@ -74,6 +74,22 @@ export default function StudentScanPage() {
       cancelAnimationFrame(scanFrameRef.current)
 
       scanFrameRef.current = null
+
+    }
+
+    if (html5QrcodeRef.current) {
+
+      try {
+
+        html5QrcodeRef.current.stop()
+
+      } catch {
+
+        // ignore stop errors
+
+      }
+
+      html5QrcodeRef.current = null
 
     }
 
@@ -144,89 +160,46 @@ export default function StudentScanPage() {
 
   }, [stopCamera])
 
-
-
-  const startCamera = async () => {
+const startCamera = async () => {
 
     setMessage("")
 
     setIsSuccess(false)
 
 
-
-
-    const browserWindow = window as Window & { BarcodeDetector?: BarcodeDetectorConstructor }
-
-    if (!browserWindow.BarcodeDetector) {
-
-      setMessage("Tu navegador no soporta lectura QR por camara. Puedes pegar el contenido manualmente.")
-
-
-      return
-
-    }
-
-
-
     try {
 
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      const html5Qrcode = new Html5Qrcode("qr-video")
 
-      streamRef.current = stream
+      html5QrcodeRef.current = html5Qrcode
 
-      setIsCameraActive(true)
+      await html5Qrcode.start(
 
+        { facingMode: "environment" },
 
+        { fps: 10, qrbox: 250 },
 
-      if (videoRef.current) {
+        (decodedText) => {
 
-        videoRef.current.srcObject = stream
+          setQrInput(decodedText)
 
-        await videoRef.current.play()
+          submitQRValue(decodedText)
 
-      }
+        },
 
+        () => {
 
+          // ignore scan errors
 
-      const detector = new browserWindow.BarcodeDetector({ formats: ["qr_code"] })
-
-      const scan = async () => {
-
-        if (!videoRef.current || !streamRef.current) return
-
-        try {
-
-          const codes = await detector.detect(videoRef.current)
-
-          const value = codes.find((code) => code.rawValue)?.rawValue
-
-          if (value) {
-
-            setQrInput(value)
-
-            await submitQRValue(value)
-
-            return
-
-          }
-
-        } catch {
-
-          setMessage("No se pudo leer el QR desde la camara")
-
-  
         }
 
-        scanFrameRef.current = requestAnimationFrame(scan)
+      )
 
-      }
-
-      scanFrameRef.current = requestAnimationFrame(scan)
+      setIsCameraActive(true)
 
     } catch {
 
       setMessage("No se pudo acceder a la camara. Revisa permisos del navegador.")
-
 
       stopCamera()
 
@@ -340,7 +313,7 @@ export default function StudentScanPage() {
 
               <div className="rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-lowest p-4">
 
-                <video ref={videoRef} className={isCameraActive ? "mb-3 h-56 w-full rounded-lg bg-black object-cover" : "hidden"} muted playsInline />
+                <video ref={videoRef} id="qr-video" className={isCameraActive ? "mb-3 h-56 w-full rounded-lg bg-black object-cover" : "hidden"} muted playsInline />
 
                 <button
 
