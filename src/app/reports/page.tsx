@@ -416,7 +416,7 @@ function ReportsPageContent() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant">
-                {reportData.attendances.length > 0 ? (
+                {reportData.attendances?.length > 0 ? (
                   reportData.attendances.map((row: ReportAttendanceItem) => (
                     <tr key={row.id} className="transition-colors hover:bg-background">
                       <td className="px-6 py-4 text-sm font-medium text-on-surface">
