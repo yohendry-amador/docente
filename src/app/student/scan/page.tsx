@@ -161,7 +161,7 @@ const startCamera = async () => {
 
         { facingMode: "environment" },
 
-        { fps: 10, qrbox: 250 },
+        { fps: 10, qrbox: 280 },
 
         (decodedText) => {
 
